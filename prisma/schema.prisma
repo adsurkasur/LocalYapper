@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./data/app.db"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  displayName String
+  avatarPath  String?
+  locale      String   @default("en-US")
+  timezone    String   @default("UTC")
+  theme       String   @default("system") // light, dark, system
+  defaultBotId String?
+  defaultModel String?
+  security    String?  // JSON: { passcode?: string }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  personas    Persona[]
+  bots        Bot[]
+  sessions    ChatSession[]
+
+  @@map("users")
+}
+
+model Persona {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  style       String   // e.g., "casual, friendly"
+  speakingPatterns String // e.g., "short sentences, emojis"
+  preferences String   // e.g., "likes fantasy, avoids politics"
+  tags        String   // JSON array: e.g., ["roleplay", "storyteller"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("personas")
+}
+
+model Bot {
+  id             String   @id @default(cuid())
+  userId         String
+  name           String
+  color          String   @default("#4C82FF")
+  avatarPath     String?
+  systemPrompt   String
+  defaultModel   String
+  temperature    Float    @default(0.7)
+  topP           Float    @default(0.9)
+  visibility     String   @default("private") // private, shared
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions       ChatSession[]
+
+  @@map("bots")
+}
+
+model ChatSession {
+  id             String   @id @default(cuid())
+  userId         String
+  botId          String
+  title          String   @default("New Chat")
+  modelOverride  String?
+  parametersOverride String? // JSON: { temperature?, topP? }
+  archived       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bot            Bot      @relation(fields: [botId], references: [id], onDelete: Cascade)
+  messages       Message[]
+
+  @@map("chat_sessions")
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  sessionId   String
+  role        String   // system, user, assistant, tool
+  content     String
+  metadata    String?  // JSON: { timestamp?, searchFacts?, etc. }
+  createdAt   DateTime @default(now())
+
+  session     ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model Settings {
+  id             String @id @default("singleton")
+  ollamaHost     String @default("http://127.0.0.1:11434")
+  internetEnabled Boolean @default(false)
+  updatedAt      DateTime @updatedAt
+
+  @@map("settings")
+}
