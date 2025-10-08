@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentUserId } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
@@ -7,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id: sessionId } = await params;
-    const userId = 'demo-user'; // TODO: Get from auth
+    const userId = await getCurrentUserId();
 
     const session = await prisma.chatSession.findFirst({
       where: { id: sessionId, userId },
@@ -43,9 +44,14 @@ export async function PATCH(
   try {
     const { id: sessionId } = await params;
     const body = await request.json();
-    const userId = 'demo-user'; // TODO: Get from auth
+    const userId = await getCurrentUserId();
 
-    const updateData: any = {};
+    const updateData: Partial<{
+      title: string;
+      archived: boolean;
+      modelOverride: string | null;
+      parametersOverride: string | null;
+    }> = {};
     if (body.title !== undefined) updateData.title = body.title;
     if (body.archived !== undefined) updateData.archived = body.archived;
     if (body.modelOverride !== undefined) updateData.modelOverride = body.modelOverride;

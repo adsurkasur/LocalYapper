@@ -33,11 +33,35 @@ export async function POST(request: NextRequest) {
           return;
         }
 
+        const decoder = new TextDecoder();
+        let buffer = '';
+
         try {
           while (true) {
             const { done, value } = await reader.read();
-            if (done) break;
-            controller.enqueue(value);
+            if (done) {
+              // Send final done event
+              controller.enqueue(new TextEncoder().encode('data: {"done": true}\n\n'));
+              break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+
+            // Keep the last potentially incomplete line in buffer
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              if (line.trim()) {
+                try {
+                  const data = JSON.parse(line);
+                  // Forward Ollama's response as SSE data
+                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data)}\n\n`));
+                } catch {
+                  // Ignore parse errors for incomplete lines
+                }
+              }
+            }
           }
           controller.close();
         } catch (error) {
@@ -48,7 +72,7 @@ export async function POST(request: NextRequest) {
 
     return new NextResponse(stream, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
+        'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
       },

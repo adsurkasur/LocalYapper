@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { PersonaWithTags, CreatePersonaRequest, Persona } from '@/lib/types';
+import { getCurrentUserId } from '@/lib/auth';
 
 export async function GET() {
   try {
-    // For now, get personas for demo user
-    // TODO: Get from auth/session
-    const userId = 'demo-user';
+    const userId = await getCurrentUserId();
 
     const personas = await prisma.persona.findMany({
       where: { userId },
@@ -13,9 +13,9 @@ export async function GET() {
     });
 
     // Parse tags from JSON
-    const personasWithParsedTags = personas.map((persona: any) => ({
+    const personasWithParsedTags: PersonaWithTags[] = personas.map((persona: Persona) => ({
       ...persona,
-      tags: JSON.parse(persona.tags),
+      tags: JSON.parse(persona.tags) as string[],
     }));
 
     return NextResponse.json(personasWithParsedTags);
@@ -30,8 +30,8 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const userId = 'demo-user'; // TODO: Get from auth
+    const body: CreatePersonaRequest = await request.json();
+    const userId = await getCurrentUserId();
 
     const persona = await prisma.persona.create({
       data: {
@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       ...persona,
-      tags: JSON.parse(persona.tags),
+      tags: JSON.parse(persona.tags) as string[],
     });
   } catch (error) {
     console.error('Create persona error:', error);

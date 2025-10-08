@@ -17,6 +17,7 @@ async function main() {
   });
 
   // Create demo personas
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const persona1 = await prisma.persona.upsert({
     where: { id: 'demo-persona-1' },
     update: {},
@@ -47,6 +48,7 @@ async function main() {
     },
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const bot2 = await prisma.bot.upsert({
     where: { id: 'demo-bot-2' },
     update: {},
@@ -63,6 +65,7 @@ async function main() {
   });
 
   // Create demo session
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const session = await prisma.chatSession.upsert({
     where: { id: 'demo-session-1' },
     update: {},

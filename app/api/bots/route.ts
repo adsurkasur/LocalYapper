@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentUserId } from '@/lib/auth';
 
 export async function GET() {
   try {
-    const userId = 'demo-user'; // TODO: Get from auth
+    const userId = await getCurrentUserId();
 
     const bots = await prisma.bot.findMany({
       where: { userId },
@@ -23,7 +24,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const userId = 'demo-user'; // TODO: Get from auth
+    const userId = await getCurrentUserId();
 
     const bot = await prisma.bot.create({
       data: {

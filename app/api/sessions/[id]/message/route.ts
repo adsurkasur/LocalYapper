@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getCurrentUserId } from '@/lib/auth';
+import { buildContextPack, getTimeContext } from '@/lib/prompt-assembly';
 
 export async function POST(
   request: NextRequest,
@@ -8,7 +10,7 @@ export async function POST(
   try {
     const { id: sessionId } = await params;
     const body = await request.json();
-    const userId = 'demo-user'; // TODO: Get from auth
+    const userId = await getCurrentUserId();
 
     // Get session with bot and messages
     const session = await prisma.chatSession.findFirst({
@@ -43,7 +45,7 @@ export async function POST(
     }
 
     // Create user message
-    const userMessage = await prisma.message.create({
+    await prisma.message.create({
       data: {
         sessionId,
         role: 'user',
@@ -51,8 +53,15 @@ export async function POST(
       },
     });
 
-    // Assemble context pack
-    const contextPack = buildContextPack(session, persona, body.content);
+    // Parse persona tags if persona exists
+    const personaWithTags = persona ? {
+      ...persona,
+      tags: JSON.parse(persona.tags) as string[],
+    } : null;
+
+    // Assemble context pack with time awareness
+    const timeContext = getTimeContext('UTC'); // TODO: Get from user settings
+    const contextPack = buildContextPack(session, personaWithTags, body.content, {}, timeContext);
 
     // Call Ollama
     const ollamaResponse = await fetch(`${process.env.OLLAMA_HOST || 'http://127.0.0.1:11434'}/api/chat`, {
@@ -106,7 +115,7 @@ export async function POST(
                   controller.enqueue(new TextEncoder().encode(data.response));
                 }
                 if (data.done) break;
-              } catch (e) {
+              } catch {
                 // Ignore parse errors
               }
             }
@@ -140,38 +149,4 @@ export async function POST(
       { status: 500 }
     );
   }
-}
-
-function buildContextPack(session: any, persona: any, userMessage: string) {
-  const messages = [
-    ...session.messages.map((m: any) => ({
-      role: m.role,
-      content: m.content,
-    })),
-    { role: 'user', content: userMessage },
-  ];
-
-  let systemPrompt = session.bot.systemPrompt;
-
-  // Add persona context if available
-  if (persona) {
-    systemPrompt += `\n\nYou are roleplaying as the user who is: ${persona.name}. ${persona.style}. Speaking patterns: ${persona.speakingPatterns}. Preferences: ${persona.preferences}.`;
-  }
-
-  // Simple context pack for now
-  return {
-    model: session.modelOverride || session.bot.defaultModel,
-    messages: [
-      {
-        role: 'system',
-        content: systemPrompt,
-      },
-      ...messages,
-    ],
-    stream: true,
-    options: {
-      temperature: session.parametersOverride?.temperature || session.bot.temperature,
-      top_p: session.parametersOverride?.topP || session.bot.topP,
-    },
-  };
 }

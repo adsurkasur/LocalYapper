@@ -93,14 +93,34 @@ export default function ChatPage() {
 
       const decoder = new TextDecoder();
       let fullResponse = '';
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
-        const chunk = decoder.decode(value);
-        fullResponse += chunk;
-        setCurrentResponse(fullResponse);
+        buffer += decoder.decode(value, { stream: true });
+        const events = buffer.split('\n\n');
+
+        // Keep incomplete event in buffer
+        buffer = events.pop() || '';
+
+        for (const event of events) {
+          if (event.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(event.slice(6)); // Remove 'data: ' prefix
+              if (data.response) {
+                fullResponse += data.response;
+                setCurrentResponse(fullResponse);
+              }
+              if (data.done) {
+                break;
+              }
+            } catch {
+              // Ignore parse errors
+            }
+          }
+        }
       }
 
       return fullResponse;
@@ -131,8 +151,6 @@ export default function ChatPage() {
   if (!session) {
     return <div className="flex items-center justify-center min-h-screen">Session not found</div>;
   }
-
-  const activePersona = personas?.find(p => p.id === activePersonaId);
 
   return (
     <div className="flex flex-col h-screen bg-background">
