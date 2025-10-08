@@ -106,3 +106,4 @@ data/uploads/
 .env.development.local
 .env.test.local
 .env.production.local
+ai-context.md

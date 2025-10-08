@@ -36,6 +36,7 @@
 - **2025-10-08**: Implement - Created settings page with profile, appearance, privacy options
 - **2025-10-08**: Implement - Built model chooser modal component for chat interface
 - **2025-10-08**: Implement - Phase 4 started: Advanced features - export/import functionality
+- **2025-10-08**: Implement - Fixed TypeScript/Next env diagnostics: added ignoreDeprecations to `tsconfig.json` and replaced triple-slash reference in `next-env.d.ts` with an import.
 
 ## Research Findings
 ### Current Codebase Analysis
@@ -246,3 +247,7 @@ LocalYapper MVP is now functional with:
 - All packages updated to latest stable versions (Next.js 15.5.4, React 19.2.0, TypeScript 5.9.3, Prisma 6.17.0, Tailwind 4.1.14, Framer Motion 12.23.22, TanStack Query 5.90.2, Zod 4.1.12, Tailwind Merge 3.3.1)
 
 The application can be run with `npm run dev` after setting up Ollama, providing a working roleplay chatbot experience.
+
+## Recent Fixes
+
+- **2025-10-08**: Implement - Fixed Tailwind config typo (`textend` -> `extend`) so `app/globals.css` theme extensions (custom colors and utilities) are generated and global styles load correctly.

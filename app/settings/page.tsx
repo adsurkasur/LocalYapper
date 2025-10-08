@@ -100,7 +100,7 @@ export default function SettingsPage() {
 
   if (!user) {
     return (
-      <div className="container mx-auto p-6 max-w-4xl">
+      <div className="py-6">
         <div className="animate-pulse space-y-6">
           <div className="h-8 bg-muted rounded w-48"></div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -113,7 +113,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

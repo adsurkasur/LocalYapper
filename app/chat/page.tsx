@@ -2,25 +2,16 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { motion, AnimatePresence } from 'framer-motion';
+// framer-motion used in child components
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import {
-  Send,
-  Copy,
-  RotateCcw,
-  Check,
-  CheckCheck,
-  Clock,
-  User,
-  Bot,
-  MessageSquare
-} from 'lucide-react';
+import { Send, User, Bot, MessageSquare } from 'lucide-react';
+import MessageList from '@/components/ui/message-list';
 
 interface Message {
   id: string;
@@ -56,6 +47,7 @@ export default function ChatPage() {
   const [activePersonaId, setActivePersonaId] = useState<string>('');
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const queryClient = useQueryClient();
 
   // Load personas
@@ -174,10 +166,9 @@ export default function ChatPage() {
   };
 
   const regenerateMessage = (messageId: string) => {
-    // Find the user message before this assistant message
     if (!session) return;
     const messageIndex = session.messages.findIndex(m => m.id === messageId);
-    if (messageIndex !== undefined && messageIndex > 0) {
+    if (messageIndex !== -1 && messageIndex > 0) {
       const userMessage = session.messages[messageIndex - 1];
       if (userMessage.role === 'user') {
         sendMessage.mutate(userMessage.content);
@@ -185,16 +176,7 @@ export default function ChatPage() {
     }
   };
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
-
-    if (diffInMinutes < 1) return 'Just now';
-    if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
-    return date.toLocaleDateString();
-  };
+  // timestamps are rendered by message components
 
   if (isLoading) {
     return (
@@ -220,7 +202,10 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-background via-background to-muted/10">
+    <div
+      className="flex flex-col h-screen bg-gradient-to-br from-background via-background to-muted/10"
+      style={{ ['--active-accent' as any]: session.bot.color }}
+    >
       {/* Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
         <div className="flex items-center justify-between p-4 max-w-6xl mx-auto">
@@ -234,7 +219,10 @@ export default function ChatPage() {
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="font-semibold text-lg">{session.bot.name}</h1>
+              <div className="flex items-center gap-2">
+                <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: session.bot.color }} />
+                <h1 className="font-semibold text-lg tracking-tight">{session.bot.name}</h1>
+              </div>
               <p className="text-sm text-muted-foreground flex items-center gap-1">
                 <Bot className="h-3 w-3" />
                 {session.title}
@@ -271,191 +259,63 @@ export default function ChatPage() {
 
       {/* Messages */}
       <ScrollArea className="flex-1 px-4 py-6">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <AnimatePresence>
-            {session.messages.map((msg) => (
-              <motion.div
-                key={msg.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className={`flex gap-3 group ${
-                  msg.role === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
-                {msg.role === 'assistant' && (
-                  <Avatar className="h-8 w-8 ring-1 ring-muted-foreground/20 flex-shrink-0">
-                    <AvatarFallback
-                      style={{ backgroundColor: session.bot.color }}
-                      className="text-white text-sm"
-                    >
-                      {session.bot.name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-
-                <div className={`flex flex-col gap-1 max-w-[75%] sm:max-w-[70%] ${
-                  msg.role === 'user' ? 'items-end' : 'items-start'
-                }`}>
-                  <div className={`relative group/message ${
-                    msg.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted/50 border border-muted-foreground/10'
-                  } rounded-2xl px-4 py-3 shadow-sm`}>
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {msg.content}
-                    </p>
-
-                    {/* Message Actions */}
-                    <div className={`absolute top-0 ${
-                      msg.role === 'user' ? '-left-12' : '-right-12'
-                    } opacity-0 group-hover/message:opacity-100 transition-opacity flex gap-1`}>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 w-8 p-0 hover:bg-muted"
-                        onClick={() => copyToClipboard(msg.content, msg.id)}
-                      >
-                        {copiedMessageId === msg.id ? (
-                          <Check className="h-3 w-3 text-green-500" />
-                        ) : (
-                          <Copy className="h-3 w-3" />
-                        )}
-                      </Button>
-
-                      {msg.role === 'assistant' && (
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 w-8 p-0 hover:bg-muted"
-                          onClick={() => regenerateMessage(msg.id)}
-                        >
-                          <RotateCcw className="h-3 w-3" />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Timestamp and Status */}
-                  <div className={`flex items-center gap-1 text-xs text-muted-foreground px-2 ${
-                    msg.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}>
-                    <Clock className="h-3 w-3" />
-                    <span>{formatTime(msg.createdAt)}</span>
-                    {msg.role === 'user' && (
-                      <CheckCheck className="h-3 w-3 text-green-500 ml-1" />
-                    )}
-                  </div>
-                </div>
-
-                {msg.role === 'user' && (
-                  <Avatar className="h-8 w-8 ring-1 ring-muted-foreground/20 flex-shrink-0">
-                    <AvatarFallback className="bg-secondary text-secondary-foreground text-sm">
-                      U
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-
-          {/* Streaming response */}
-          <AnimatePresence>
-            {isStreaming && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="flex gap-3 justify-start"
-              >
-                <Avatar className="h-8 w-8 ring-1 ring-muted-foreground/20 flex-shrink-0">
-                  <AvatarFallback
-                    style={{ backgroundColor: session.bot.color }}
-                    className="text-white text-sm"
-                  >
-                    {session.bot.name[0]}
-                  </AvatarFallback>
-                </Avatar>
-
-                <div className="flex flex-col gap-1 max-w-[75%] sm:max-w-[70%] items-start">
-                  <div className="bg-muted/50 border border-muted-foreground/10 rounded-2xl px-4 py-3 shadow-sm">
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {currentResponse}
-                      <motion.span
-                        animate={{ opacity: [1, 0] }}
-                        transition={{ duration: 0.8, repeat: Infinity }}
-                        className="inline-block ml-1"
-                      >
-                        ▊
-                      </motion.span>
-                    </p>
-                  </div>
-
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground px-2">
-                    <div className="flex gap-1">
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-                        className="w-1 h-1 bg-muted-foreground/50 rounded-full"
-                      />
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, delay: 0.2 }}
-                        className="w-1 h-1 bg-muted-foreground/50 rounded-full"
-                      />
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 1.5, repeat: Infinity, delay: 0.4 }}
-                        className="w-1 h-1 bg-muted-foreground/50 rounded-full"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div ref={messagesEndRef} />
-        </div>
+        <MessageList
+          messages={session.messages}
+          botColor={session.bot.color}
+          isStreaming={isStreaming}
+          currentResponse={currentResponse}
+          copiedMessageId={copiedMessageId}
+          onCopy={copyToClipboard}
+          onRegenerate={regenerateMessage}
+        />
+        <div ref={messagesEndRef} />
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky bottom-0">
+      <div className="border-t bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky bottom-0">
         <div className="max-w-4xl mx-auto p-4">
-          <form onSubmit={handleSubmit} className="flex gap-3 items-end">
+          <form onSubmit={handleSubmit} className="flex items-end gap-3">
             <div className="flex-1 relative">
-              <Input
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Type your message..."
-                disabled={isStreaming}
-                className="pr-12 py-3 text-sm rounded-xl border-muted-foreground/20 focus:border-primary/50 min-h-[44px] resize-none"
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-              />
-              {message.trim() && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">
-                  Press Enter to send
+              <div className="rounded-2xl border border-muted-foreground/15 bg-card/40 shadow-sm">
+                <Textarea
+                  ref={textareaRef}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Type a message. Shift+Enter for newline."
+                  disabled={isStreaming}
+                  className="pr-16 py-3 text-sm rounded-2xl border-0 min-h-[44px] resize-none bg-transparent"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSubmit(e);
+                    }
+                  }}
+                  onInput={(e) => {
+                    const el = e.currentTarget as HTMLTextAreaElement;
+                    el.style.height = 'auto';
+                    el.style.height = Math.min(el.scrollHeight, 240) + 'px';
+                  }}
+                />
+                <div className="absolute right-2 bottom-2 flex items-center gap-2">
+                  <span className="hidden sm:block text-[11px] text-muted-foreground mr-1">
+                    Enter to send
+                  </span>
+                  <Button
+                    type="submit"
+                    disabled={!message.trim() || isStreaming}
+                    size="icon"
+                    className="h-9 w-9 rounded-xl"
+                    aria-label="Send message"
+                  >
+                    {isStreaming ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
-            <Button
-              type="submit"
-              disabled={!message.trim() || isStreaming}
-              size="lg"
-              className="rounded-xl px-6 h-11"
-            >
-              {isStreaming ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
           </form>
 
           {isStreaming && (

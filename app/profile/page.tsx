@@ -89,7 +89,7 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -97,7 +97,10 @@ export default function ProfilePage() {
       >
         <div className="flex items-center gap-3">
           <User className="h-8 w-8" />
-          <h1 className="text-3xl font-bold">Profile & Personas</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Profile & Personas</h1>
+            <p className="text-muted-foreground">Manage your display name, avatar, and preferences</p>
+          </div>
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">

@@ -17,8 +17,14 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-2 p-2 bg-background border-b">
-      <div className="flex items-center gap-1">
+    <nav className="bg-background/70 border-b backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      <div className="main-container flex items-center justify-between gap-2 p-2">
+        <Link href="/chat" className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent/40 transition-colors select-none">
+          <MessageSquare className="h-5 w-5 text-primary" />
+          <span className="font-semibold tracking-tight brand-title">LocalYapper</span>
+          <span className="ml-2 px-1.5 py-0.5 rounded-md text-[10px] font-medium" style={{ backgroundColor: 'var(--active-accent, hsl(var(--primary)))', color: 'white' }}>UI v0.2</span>
+        </Link>
+        <div className="flex items-center gap-1">
         {navigation.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -28,14 +34,22 @@ export function Navigation() {
               <Button
                 variant={isActive ? 'default' : 'ghost'}
                 size="sm"
-                className="flex items-center gap-2"
+                className={`flex items-center gap-2 relative ${isActive ? 'shadow-sm' : ''}`}
+                aria-current={isActive ? 'page' : undefined}
               >
                 <Icon className="h-4 w-4" />
                 <span className="hidden sm:inline">{item.name}</span>
+                {isActive && (
+                  <span
+                    className="absolute -bottom-1 left-2 right-2 h-0.5 rounded-full"
+                    style={{ backgroundColor: 'var(--active-accent, hsl(var(--primary)))' }}
+                  />
+                )}
               </Button>
             </Link>
           );
         })}
+        </div>
       </div>
     </nav>
   );

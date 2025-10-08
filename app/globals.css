@@ -29,6 +29,20 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    /* Dynamic accent for active bot/persona (overridable inline) */
+    --active-accent: hsl(var(--primary));
+    /* Motion tokens */
+    --motion-fast: 120ms;
+    --motion-normal: 220ms;
+    --motion-slow: 360ms;
+    /* Design tokens for typography and spacing */
+    --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    --text-lg: 16px;
+    --text-base: 15px;
+    --h1: 36px;
+    --h2: 22px;
+    --radius: 0.5rem;
+    --container-max: 1100px;
   }
 
   .dark {
@@ -65,5 +79,41 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+  }
+
+  /* Page container utility */
+  .main-container {
+    max-width: var(--container-max);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Page header */
+  .page-header h1 {
+    font-size: var(--h1);
+    line-height: 1.05;
+    margin: 0;
+  }
+  .page-header p {
+    margin-top: 0.25rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  /* Subtle brand title treatment */
+  .brand-title {
+    background: linear-gradient(90deg, var(--active-accent), hsl(var(--foreground)) 60%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Accent chip utility */
+  .accent-chip {
+    background-color: var(--active-accent);
+    color: white;
   }
 }

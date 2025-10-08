@@ -88,7 +88,7 @@ export default function BotsPage() {
   });
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
+    <div className="py-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
