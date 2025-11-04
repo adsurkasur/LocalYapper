@@ -138,7 +138,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="locale">Locale</Label>
                     <Select defaultValue={user?.locale || 'en-US'}>
@@ -150,20 +150,6 @@ export default function ProfilePage() {
                         <SelectItem value="en-GB">English (UK)</SelectItem>
                         <SelectItem value="es-ES">Spanish</SelectItem>
                         <SelectItem value="fr-FR">French</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="theme">Theme</Label>
-                    <Select defaultValue={user?.theme || 'system'}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
