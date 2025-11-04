@@ -204,7 +204,7 @@ export default function ChatPage() {
   return (
     <div
       className="flex flex-col h-screen bg-gradient-to-br from-background via-background to-muted/10"
-      style={{ ['--active-accent' as any]: session.bot.color }}
+      style={{ '--active-accent': session.bot.color } as React.CSSProperties}
     >
       {/* Header */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
