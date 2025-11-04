@@ -7,6 +7,7 @@ export async function GET(request: NextRequest) {
     const userId = await getCurrentUserId();
     const { searchParams } = new URL(request.url);
     const botId = searchParams.get('botId');
+    const limit = searchParams.get('limit');
 
     const where = botId ? { userId, botId, archived: false } : { userId, archived: false };
 
@@ -17,8 +18,12 @@ export async function GET(request: NextRequest) {
           orderBy: { createdAt: 'asc' },
         },
         bot: true,
+        _count: {
+          select: { messages: true },
+        },
       },
       orderBy: { updatedAt: 'desc' },
+      take: limit ? parseInt(limit) : undefined,
     });
 
     return NextResponse.json(sessions);

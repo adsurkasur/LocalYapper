@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MessageSquare, User, Bot, Settings, Search } from 'lucide-react';
 
 const navigation = [
-  { name: 'Chat', href: '/chat', icon: MessageSquare },
+  { name: 'Home', href: '/', icon: MessageSquare },
   { name: 'Profile', href: '/profile', icon: User },
   { name: 'Bots', href: '/bots', icon: Bot },
   { name: 'Search', href: '/search', icon: Search },
@@ -19,7 +19,7 @@ export function Navigation() {
   return (
     <nav className="bg-background/70 border-b backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="main-container flex items-center justify-between gap-2 p-2">
-        <Link href="/chat" className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent/40 transition-colors select-none">
+        <Link href="/" className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-accent/40 transition-colors select-none">
           <MessageSquare className="h-5 w-5 text-primary" />
           <span className="font-semibold tracking-tight brand-title">LocalYapper</span>
           <span className="ml-2 px-1.5 py-0.5 rounded-md text-[10px] font-medium" style={{ backgroundColor: 'var(--active-accent, hsl(var(--primary)))', color: 'white' }}>UI v0.2</span>
