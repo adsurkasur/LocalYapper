@@ -59,8 +59,15 @@ export async function POST(
       tags: JSON.parse(persona.tags) as string[],
     } : null;
 
+    // Get user timezone for time awareness
+    const user = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { timezone: true },
+    });
+    const userTimezone = user?.timezone || 'UTC';
+
     // Assemble context pack with time awareness
-    const timeContext = getTimeContext('UTC'); // TODO: Get from user settings
+    const timeContext = getTimeContext(userTimezone);
     const contextPack = buildContextPack(session, personaWithTags, body.content, {}, timeContext);
 
     // Call Ollama

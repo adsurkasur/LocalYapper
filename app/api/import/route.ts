@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
         timezone: importData.user.timezone,
         theme: importData.user.theme,
         defaultModel: importData.user.defaultModel,
-        security: importData.user.security,
       },
     });
 

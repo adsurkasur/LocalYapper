@@ -150,8 +150,80 @@ export default function ProfilePage() {
                         <SelectItem value="en-GB">English (UK)</SelectItem>
                         <SelectItem value="es-ES">Spanish</SelectItem>
                         <SelectItem value="fr-FR">French</SelectItem>
+                        <SelectItem value="de-DE">German</SelectItem>
+                        <SelectItem value="it-IT">Italian</SelectItem>
+                        <SelectItem value="pt-BR">Portuguese (Brazil)</SelectItem>
+                        <SelectItem value="pt-PT">Portuguese (Portugal)</SelectItem>
+                        <SelectItem value="ru-RU">Russian</SelectItem>
+                        <SelectItem value="ja-JP">Japanese</SelectItem>
+                        <SelectItem value="ko-KR">Korean</SelectItem>
+                        <SelectItem value="zh-CN">Chinese (Simplified)</SelectItem>
+                        <SelectItem value="zh-TW">Chinese (Traditional)</SelectItem>
+                        <SelectItem value="ar-SA">Arabic</SelectItem>
+                        <SelectItem value="hi-IN">Hindi</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="timezone">Timezone</Label>
+                    <Select defaultValue={user?.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* UTC-12 to UTC-1 */}
+                        <SelectItem value="Pacific/Pago_Pago">UTC-11:00 Pago Pago, Midway, Samoa</SelectItem>
+                        <SelectItem value="Pacific/Honolulu">UTC-10:00 Hawaii, Honolulu, Tahiti</SelectItem>
+                        <SelectItem value="America/Anchorage">UTC-09:00 Alaska, Anchorage, Juneau</SelectItem>
+                        <SelectItem value="America/Los_Angeles">UTC-08:00 Pacific Time (US & Canada), Los Angeles, Vancouver</SelectItem>
+                        <SelectItem value="America/Denver">UTC-07:00 Mountain Time (US & Canada), Denver, Phoenix</SelectItem>
+                        <SelectItem value="America/Chicago">UTC-06:00 Central Time (US & Canada), Chicago, Mexico City</SelectItem>
+                        <SelectItem value="America/New_York">UTC-05:00 Eastern Time (US & Canada), New York, Toronto</SelectItem>
+                        <SelectItem value="America/Caracas">UTC-04:30 Caracas, La Paz</SelectItem>
+                        <SelectItem value="America/Halifax">UTC-04:00 Atlantic Time (Canada), Halifax, Santiago</SelectItem>
+                        <SelectItem value="America/St_Johns">UTC-03:30 Newfoundland, St. John&apos;s</SelectItem>
+                        <SelectItem value="America/Sao_Paulo">UTC-03:00 São Paulo, Buenos Aires, Montevideo</SelectItem>
+                        <SelectItem value="Atlantic/South_Georgia">UTC-02:00 South Georgia, Mid-Atlantic</SelectItem>
+                        <SelectItem value="Atlantic/Azores">UTC-01:00 Azores, Cape Verde</SelectItem>
+
+                        {/* UTC+0 */}
+                        <SelectItem value="UTC">UTC+00:00 Greenwich Mean Time, London, Dublin</SelectItem>
+                        <SelectItem value="Europe/London">UTC+00:00 London, Dublin, Lisbon</SelectItem>
+                        <SelectItem value="Africa/Casablanca">UTC+00:00 Casablanca, Monrovia</SelectItem>
+
+                        {/* UTC+1 to UTC+12 */}
+                        <SelectItem value="Europe/Paris">UTC+01:00 Central European Time, Paris, Berlin, Rome, Madrid</SelectItem>
+                        <SelectItem value="Europe/Berlin">UTC+01:00 Berlin, Vienna, Prague, Warsaw</SelectItem>
+                        <SelectItem value="Europe/Rome">UTC+01:00 Rome, Zurich, Amsterdam, Brussels</SelectItem>
+                        <SelectItem value="Europe/Madrid">UTC+01:00 Madrid, Barcelona, Stockholm</SelectItem>
+                        <SelectItem value="Europe/Amsterdam">UTC+01:00 Amsterdam, Copenhagen, Oslo</SelectItem>
+                        <SelectItem value="Europe/Brussels">UTC+01:00 Brussels, Luxembourg, Prague</SelectItem>
+                        <SelectItem value="Europe/Zurich">UTC+01:00 Zurich, Geneva, Vienna</SelectItem>
+                        <SelectItem value="Europe/Vienna">UTC+01:00 Vienna, Budapest, Bucharest</SelectItem>
+                        <SelectItem value="Europe/Prague">UTC+01:00 Prague, Bratislava, Ljubljana</SelectItem>
+                        <SelectItem value="Europe/Warsaw">UTC+01:00 Warsaw, Zagreb, Sarajevo</SelectItem>
+                        <SelectItem value="Europe/Budapest">UTC+01:00 Budapest, Athens, Istanbul</SelectItem>
+                        <SelectItem value="Europe/Athens">UTC+01:00 Athens, Helsinki, Jerusalem</SelectItem>
+                        <SelectItem value="Europe/Bucharest">UTC+01:00 Bucharest, Sofia, Tallinn</SelectItem>
+                        <SelectItem value="Africa/Cairo">UTC+02:00 Cairo, Johannesburg, Khartoum</SelectItem>
+                        <SelectItem value="Europe/Kiev">UTC+02:00 Eastern European Time, Kiev, Minsk, Riga</SelectItem>
+                        <SelectItem value="Europe/Istanbul">UTC+03:00 Istanbul, Moscow, Baghdad</SelectItem>
+                        <SelectItem value="Asia/Dubai">UTC+04:00 Dubai, Abu Dhabi, Baku, Tbilisi</SelectItem>
+                        <SelectItem value="Asia/Karachi">UTC+05:00 Karachi, Tashkent, Islamabad</SelectItem>
+                        <SelectItem value="Asia/Dhaka">UTC+06:00 Dhaka, Almaty, Novosibirsk</SelectItem>
+                        <SelectItem value="Asia/Bangkok">UTC+07:00 Bangkok, Hanoi, Jakarta, Phnom Penh</SelectItem>
+                        <SelectItem value="Asia/Shanghai">UTC+08:00 China Standard Time, Beijing, Singapore, Taipei</SelectItem>
+                        <SelectItem value="Asia/Tokyo">UTC+09:00 Japan Standard Time, Tokyo, Seoul, Pyongyang</SelectItem>
+                        <SelectItem value="Australia/Sydney">UTC+10:00 Australian Eastern Time, Sydney, Melbourne, Vladivostok</SelectItem>
+                        <SelectItem value="Pacific/Noumea">UTC+11:00 Noumea, Solomon Islands, Magadan</SelectItem>
+                        <SelectItem value="Pacific/Auckland">UTC+12:00 New Zealand, Fiji, Kamchatka</SelectItem>
+                        <SelectItem value="Pacific/Kiritimati">UTC+14:00 Kiritimati, Line Islands</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Current timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+                    </p>
                   </div>
                 </div>
 

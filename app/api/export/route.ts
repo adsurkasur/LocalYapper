@@ -52,7 +52,6 @@ export async function GET() {
         timezone: user.timezone,
         theme: user.theme,
         defaultModel: user.defaultModel,
-        security: user.security,
       },
       personas: personas.map(persona => ({
         name: persona.name,

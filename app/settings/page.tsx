@@ -7,9 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Switch } from '@/components/ui/switch';
-import { Settings, User, Palette, Globe, Shield, Save } from 'lucide-react';
+import { Settings, Palette, Globe, Save } from 'lucide-react';
 import { User as UserType } from '@/lib/types';
 
 export default function SettingsPage() {
@@ -130,79 +128,6 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Profile Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
-                Profile
-              </CardTitle>
-              <CardDescription>
-                Manage your personal information and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarFallback style={{ backgroundColor: user.defaultBotId ? '#4C82FF' : '#8B5CF6' }}>
-                    {user.displayName[0]}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="space-y-2 flex-1">
-                  <Label htmlFor="displayName">Display Name</Label>
-                  <Input
-                    id="displayName"
-                    defaultValue={user.displayName}
-                    onBlur={(e) => handleSave('displayName', e.target.value)}
-                    placeholder="Your display name"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="locale">Language</Label>
-                <Select
-                  defaultValue={user.locale}
-                  onValueChange={(value) => handleSave('locale', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en-US">English (US)</SelectItem>
-                    <SelectItem value="en-GB">English (UK)</SelectItem>
-                    <SelectItem value="es-ES">Español</SelectItem>
-                    <SelectItem value="fr-FR">Français</SelectItem>
-                    <SelectItem value="de-DE">Deutsch</SelectItem>
-                    <SelectItem value="ja-JP">日本語</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="timezone">Timezone</Label>
-                <Select
-                  defaultValue={user.timezone}
-                  onValueChange={(value) => handleSave('timezone', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="America/New_York">Eastern Time</SelectItem>
-                    <SelectItem value="America/Chicago">Central Time</SelectItem>
-                    <SelectItem value="America/Denver">Mountain Time</SelectItem>
-                    <SelectItem value="America/Los_Angeles">Pacific Time</SelectItem>
-                    <SelectItem value="Europe/London">London</SelectItem>
-                    <SelectItem value="Europe/Paris">Paris</SelectItem>
-                    <SelectItem value="Asia/Tokyo">Tokyo</SelectItem>
-                    <SelectItem value="UTC">UTC</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Appearance Settings */}
           <Card>
             <CardHeader>
@@ -243,64 +168,6 @@ export default function SettingsPage() {
                 <p className="text-xs text-muted-foreground">
                   Leave empty to use bot-specific models
                 </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Privacy & Security */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Privacy & Security
-              </CardTitle>
-              <CardDescription>
-                Control your data and privacy settings
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Local Only</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Keep all data on your device
-                  </p>
-                </div>
-                <Switch
-                  checked={true}
-                  disabled
-                  aria-label="Local only mode"
-                />
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label>Auto-save Sessions</Label>
-                  <p className="text-sm text-muted-foreground">
-                    Automatically save chat sessions
-                  </p>
-                </div>
-                <Switch
-                  checked={true}
-                  disabled
-                  aria-label="Auto-save sessions"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="security">Security Level</Label>
-                <Select
-                  defaultValue={user.security || 'standard'}
-                  onValueChange={(value) => handleSave('security', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="standard">Standard</SelectItem>
-                    <SelectItem value="high">High Security</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
           </Card>
